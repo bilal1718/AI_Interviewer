@@ -1,10 +1,13 @@
 import './App.css'
+import Chat_Bot from './components/Chat_Bot'
 import SignUp from './components/SignUp'
+
 
 function App() {
   return(
     <>
-    <SignUp />
+     <Chat_Bot />
+    {/* <SignUp /> */}
     </>
   )
 }
