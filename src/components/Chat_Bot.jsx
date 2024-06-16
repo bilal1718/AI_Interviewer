@@ -39,8 +39,8 @@ const Chat_Bot = () => {
       console.log("Response from backend:", data); // Log the response from the backend
       setChatHistory(oldChatHistory => [
         ...oldChatHistory,
-        { role: "user", parts: value },
-        { role: "model", parts: data } // Ensure 'parts' is used consistently
+        { role: "user", parts: [value] }, // Ensure 'parts' is an array
+        { role: "model", parts: [data] }  // Ensure 'parts' is an array
       ]);
       setValue("");
     } catch (error) {
@@ -59,7 +59,7 @@ const Chat_Bot = () => {
     <div className='app'>
       <section className='search-section'>
         <p>What do you want to know?
-          <button className='surprise' onClick={surprise} disabled={!chatHistory}>Surprise me!</button>
+          <button className='surprise' onClick={surprise} disabled={!chatHistory.length}>Surprise me!</button>
         </p>
         <div className='input-container'>
           <input
@@ -74,7 +74,7 @@ const Chat_Bot = () => {
         <div className='search-result'>
           {chatHistory.map((chatItem, _index) => (
             <div key={_index}>
-              <p className='answer'>{chatItem.role}: {chatItem.parts}</p>
+              <p className='answer'>{chatItem.role}: {chatItem.parts.join(' ')}</p>
             </div>
           ))}
         </div>
