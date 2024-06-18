@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Chat_Bot = ({chatHistory,setChatHistory}) => {
+const Chat_Bot = ({ chatHistory, setChatHistory }) => {
   const [error, setError] = useState("");
   const [value, setValue] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -44,10 +44,6 @@ const Chat_Bot = ({chatHistory,setChatHistory}) => {
         { role: "model", parts: [data.message] }
       ]);
       setFeedback(data.feedback);
-      // clear();
-      // setTimeout(() => {
-      //   setIsSetupComplete(false);
-      // }, 5000);
       setValue("");
       return;
     }
@@ -87,40 +83,55 @@ const Chat_Bot = ({chatHistory,setChatHistory}) => {
     setFeedback("");
   };
 
+  // Function to parse and render text
+  const renderText = (text) => {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(part => part);
+    return parts.map((part, index) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <h2 key={index} className="text-xl font-bold mb-2">{part.slice(2, -2)}</h2>;
+      } else {
+        return <p key={index} className="text-lg mb-2">{part}</p>;
+      }
+    });
+  };
+
   return (
     <div className='app'>
       <section className='search-section'>
-          <div>
-            <p>What do you want to know?
-              <button className='surprise' onClick={surprise} disabled={!chatHistory.length}>Surprise me!</button>
-            </p>
-            <div className='input-container'>
-              <input
-                value={value}
-                placeholder='When is Christmas...?'
-                onChange={(e) => setValue(e.target.value)}
-              />
-              {!error && <button onClick={getResponse}>Ask me</button>}
-              {error && <button onClick={clear}>Clear</button>}
-               </div>
-                 {error && <p>{error}</p>}
-               <div className='search-result'>
-               {chatHistory.map((chatItem, _index) => (
-              <div key={_index}>
-             <p className='answer'>{chatItem.role}: {chatItem.parts.join(' ')}</p>
-              </div>
-              ))}
-            {feedback && (
-            <div className='feedback'>
-           <p className='feedback-title'>Interview Feedback:</p>
-           <p>{feedback}</p>
-           </div>
-             )}
+        <div>
+          <p>What do you want to know?
+            <button className='surprise' onClick={surprise} disabled={!chatHistory.length}>Surprise me!</button>
+          </p>
+          <div className='input-container'>
+            <input
+              value={value}
+              placeholder='When is Christmas...?'
+              onChange={(e) => setValue(e.target.value)}
+              className='border p-2 rounded'
+            />
+            {!error && <button onClick={getResponse} className='ml-2 p-2 bg-blue-500 text-white rounded'>Ask me</button>}
+            {error && <button onClick={clear} className='ml-2 p-2 bg-red-500 text-white rounded'>Clear</button>}
           </div>
-         </div>
-     </section>
-     </div>
-);
+          {error && <p className='text-red-500 mt-2'>{error}</p>}
+          <div className='search-result mt-4'>
+            {chatHistory.slice(9).map((chatItem, index) => (
+              <div key={index + 9} className={`chat-item ${chatItem.role} mb-4`}>
+                <div className='answer'>
+                  {renderText(chatItem.parts.join(' '))}
+                </div>
+              </div>
+            ))}
+            {feedback && (
+              <div className='feedback p-4 bg-gray-100 border rounded mt-4'>
+                <p className='feedback-title text-xl font-bold mb-2'>Interview Feedback:</p>
+                <p>{feedback}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 };
 
 export default Chat_Bot;
