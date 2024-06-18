@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import "react-phone-input-2/lib/style.css";
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -146,9 +147,11 @@ const SignUp = () => {
                     {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
                   </div>
                   <div className="relative">
+                    <Link to="/questions">
                     <button type="submit" className="bg-blue-500 text-white rounded-md px-2 py-1">
                       Submit
                     </button>
+                    </Link>
                   </div>
                 </form>
               </div>
