@@ -6,28 +6,34 @@ app.use(express.json());
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
+
+// Increase the default max listeners limit to avoid warnings
+const events = require('events');
+events.EventEmitter.defaultMaxListeners = 20;
 
 app.post('/setup', async (req, res) => {
   try {
     const initialResponses = req.body.initialResponses;
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
     const initialSetup = Object.values(initialResponses).map(response => ({
       role: "user",
       parts: [{ text: response }]
     }));
 
     const chat = model.startChat({ history: initialSetup });
-    const initialMessage = 
-      `Based on the user's background, please generate interview questions.
+    const initialMessage =
+      `As you know user history,
+      user have title, years of experience, skills, industry in which user wants to placed,
+      job type in which user wants to work, user preferred location, type of company in which user is interested.
+     Take the users mock interview.
        First, only generate one question.`;
     const result = await chat.sendMessage(initialMessage);
     const response = result.response;
 
     if (response && response.candidates && response.candidates.length > 0) {
       const text = response.candidates[0].content.parts.map(part => part.text).join(' ');
-      res.json({ chatHistory: [...initialSetup, { role: "model", parts: [text] }] });
+      res.json({ chatHistory: [...initialSetup, { role: "model", parts: [{ text }] }] });
     } else {
       throw new Error("Invalid response format");
     }
@@ -55,7 +61,8 @@ app.post('/gemini', async (req, res) => {
       const feedbackResponse = feedbackResult.response;
 
       if (feedbackResponse && feedbackResponse.candidates && feedbackResponse.candidates.length > 0) {
-        const feedbackText = feedbackResponse.candidates[0].content.parts.map(part => part.text).join(' ');
+        const feedbackText = feedbackResponse.candidates[0].content.parts.map(part => part.text).join
+        (' ');
         res.json({
           message: "Thank you for your time. This concludes our interview. Have a great day!",
           feedback: feedbackText
