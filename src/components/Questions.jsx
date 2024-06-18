@@ -27,11 +27,18 @@ const Questions = ({ chatHistory, setChatHistory }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setChatHistory(data.chatHistory);
+      console.log(data);
+      setChatHistory(data.chatHistory.map(item => {
+        return {
+          role: item.role,
+          parts: item.parts.map(part => typeof part === 'object' ? part.text : part)
+        };
+      }));
     } catch (error) {
       console.error('Error in handleSubmit function:', error);
     }
   };
+  
 
   const nextStep = () => {
     setStep(step + 1);
@@ -241,12 +248,16 @@ const Questions = ({ chatHistory, setChatHistory }) => {
                 >
                   Previous
                 </button>
-                <Link to="/chatbot">
+                
                 <button
                   type='submit'
                   className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'
                 >
                   Submit
+                </button>
+                <Link to="/chatbot">
+                <button>
+                  GO TO CHAT
                 </button>
                 </Link>
               </div>
