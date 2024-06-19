@@ -1,12 +1,19 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const twilio = require('twilio');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const PORT = process.env.PORT || 8000;
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN, {
+  lazyLoading: true,
+});
+
 
 // Increase the default max listeners limit to avoid warnings
 const events = require('events');
@@ -87,5 +94,29 @@ app.post('/gemini', async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+app.post('/whatsapp', (req, res) => {
+  const { message } = req.body;
+  client.messages
+    .create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      body: message,
+      to: `whatsapp:+923095972568`,
+    })
+    .then(message => res.send(`Message sent: ${message.sid}`))
+    .catch(err => res.status(500).send(err));
+});
+
+app.post('/whatsapp-incoming', (req, res) => {
+  const incomingMessage = req.body.Body;
+  const from = req.body.From;
+
+  console.log(`Received message: "${incomingMessage}" from ${from}`);
+  const twiml = new twilio.twiml.MessagingResponse();
+  twiml.message('Thanks for your message!');
+  res.writeHead(200, { 'Content-Type': 'text/xml' });
+  res.end(twiml.toString());
+});
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+
