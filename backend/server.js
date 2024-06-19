@@ -119,4 +119,3 @@ app.post('/whatsapp-incoming', (req, res) => {
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
-
