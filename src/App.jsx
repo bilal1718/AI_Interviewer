@@ -12,9 +12,11 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<SignUp />} />
-      <Route path='/questions' element={<Questions
+      <Route path='/questions'
+       element={<Questions
        chatHistory={chatHistory} setChatHistory={setChatHistory} />} />
-      <Route path='/chatbot' element={<Chat_Bot
+      <Route path='/chatbot'
+      element={<Chat_Bot
       chatHistory={chatHistory} setChatHistory={setChatHistory} />} />
     </Routes>
     </BrowserRouter>
