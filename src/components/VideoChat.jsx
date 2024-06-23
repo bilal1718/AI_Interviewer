@@ -2,14 +2,13 @@ import React, { useState , useCallback} from 'react';
 import Lobby from './Lobby';
 import Room from './Room';
 
-const VideoChat = () => {
+const VideoChat = ({chatHistory, setChatHistory}) => {
     const [username, setUsername] = useState('');
     const [roomName, setRoomName] = useState('');
     const [token, setToken] = useState(null);
     const handleUsernameChange = useCallback(event => {
         setUsername(event.target.value);
       }, []);
-    
       const handleRoomNameChange = useCallback(event => {
         setRoomName(event.target.value);
       }, []);
@@ -20,8 +19,8 @@ const VideoChat = () => {
           const data = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
-              identity: username, // Make sure username is defined and not empty
-              room: roomName // Make sure roomName is defined and not empty
+              identity: username,
+              room: roomName
             }),
             headers: {
               'Content-Type': 'application/json'
@@ -34,17 +33,15 @@ const VideoChat = () => {
           setToken(tokenData.token);
         } catch (error) {
           console.error('Error fetching token:', error);
-          // Handle error state in your application
         }
       }, [username, roomName]);
-      
       const handleLogout = useCallback(event => {
         setToken(null);
       }, []);
       let render;
   if (token) {
     render = (
-      <Room roomName={roomName} token={token} handleLogout={handleLogout} />
+      <Room chatHistory={chatHistory} setChatHistory={setChatHistory} roomName={roomName} token={token} handleLogout={handleLogout} />
     );
   } else {
     render = (
@@ -58,12 +55,6 @@ const VideoChat = () => {
     );
   }
   return render;
-    
-  return (
-    <div>
-      
-    </div>
-  )
 }
 
 export default VideoChat
