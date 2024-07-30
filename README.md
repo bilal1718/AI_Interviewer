@@ -1,7 +1,7 @@
 # Next-Gen AI Interview: Multilingual and Real-Time Analysis
 
 
-__This repository contains my submission for the Twilio Challenge.__
+__This repository contains my submission for the Twilio Competition.__
 
 ## What is this project about?
 
